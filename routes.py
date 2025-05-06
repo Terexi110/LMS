@@ -7,6 +7,7 @@ from flask_bcrypt import Bcrypt
 main = Blueprint('main', __name__)
 bcrypt = Bcrypt()
 
+
 @main.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -18,6 +19,7 @@ def register():
         flash('Your account has been created!', 'success')
         return redirect(url_for('main.login'))
     return render_template('register.html', form=form)
+
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
@@ -31,11 +33,13 @@ def login():
             flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', form=form)
 
+
 @main.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('main.login'))
+
 
 @main.route('/home')
 @login_required

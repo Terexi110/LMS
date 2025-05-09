@@ -1,4 +1,7 @@
 let scene, camera, renderer, controls;
+let isCameraLocked = false;
+let originalCameraPosition = new THREE.Vector3();
+let originalControlsTarget = new THREE.Vector3();
 
 function init() {
     scene = new THREE.Scene();
@@ -86,6 +89,7 @@ function createSolarSystem() {
         const orbitMaterial = new THREE.LineBasicMaterial({ color: 0x444444 });
         const orbit = new THREE.Line(orbitGeometry, orbitMaterial);
         orbit.rotation.x = -Math.PI / 2;
+        orbit.isOrbit = true;
         scene.add(orbit);
 
         // Добавление свойств для анимации
@@ -102,6 +106,8 @@ function createSolarSystem() {
     const moon = new THREE.Mesh(moonGeometry, new THREE.MeshPhongMaterial({ map: moonTexture }));
     moon.name = "Moon";
     moon.position.x = 2;
+    moon.speed = 0.002;
+    moon.initialDistance = 2;
     earth.add(moon);
 
     // Свойства для анимации Луны
@@ -136,23 +142,55 @@ function createSolarSystem() {
 
 // Raycasting для кликов
 function onDocumentClick(event) {
+    event.preventDefault();
+
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
+    const interactableObjects = [];
+    scene.traverse(obj => {
+        if (!obj.isOrbit && obj.isMesh) interactableObjects.push(obj);
+    });
+
     raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(scene.children);
+    const intersects = raycaster.intersectObjects(interactableObjects);
 
     if (intersects.length > 0) {
-        const planet = intersects[0].object;
-        showPlanetInfo(planet.name); // Реализовать функцию
+        const clickedObj = intersects[0].object;
+
+        // Получаем глобальную позицию объекта
+        const targetPosition = new THREE.Vector3();
+        clickedObj.getWorldPosition(targetPosition);
+
+        // ЛКМ - приближение к объекту
+        if (event.button === 0) {
+            originalCameraPosition.copy(camera.position);
+            originalControlsTarget.copy(controls.target);
+
+            // Устанавливаем цель управления в позицию объекта
+            controls.target.copy(targetPosition);
+            controls.update();
+
+            // Включаем управление камерой
+            controls.enablePan = true;
+            controls.enableZoom = true;
+            isCameraLocked = true;
+        }
     }
 }
 
 function animate() {
     requestAnimationFrame(animate);
+
+    // Плавное перемещение
+    if (isCameraLocked) {
+        controls.screenSpacePanning = false;
+        controls.minDistance = 10;
+        controls.maxDistance = 100;
+    }
 
     // Обновление позиций планет и вращение
     scene.traverse(obj => {
@@ -167,10 +205,10 @@ function animate() {
         }
 
         if (obj.name === "Moon") {
-            obj.angle += obj.speed * 0.1;
+            obj.angle += 0.002;
+            obj.rotation.y = obj.angle;
             obj.position.x = 3 * Math.cos(obj.angle);
             obj.position.z = 3 * Math.sin(obj.angle);
-            obj.rotation.y += 0.02;
         }
     });
 

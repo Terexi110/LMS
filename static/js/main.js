@@ -25,7 +25,7 @@ function init() {
 
     // Камера
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 50, 100);
+    camera.position.set(1000, 50, 100);
 
     // Рендер
     renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -50,7 +50,7 @@ function init() {
 
 function createSolarSystem() {
     // Солнце
-    const sunGeometry = new THREE.SphereGeometry(5, 32, 32);
+    const sunGeometry = new THREE.SphereGeometry(100, 32, 32);
     const sunTexture = new THREE.TextureLoader().load('/static/textures/sun.jpg');
     const sun = new THREE.Mesh(sunGeometry, new THREE.MeshBasicMaterial({ map: sunTexture }));
     sun.name = "Sun"
@@ -58,14 +58,14 @@ function createSolarSystem() {
 
     // Параметры планет
     const planets = [
-        { name: "Mercury", radius: 0.8, distance: 12, speed: 4.7, texture: 'mercury.jpg' },
-        { name: "Venus", radius: 1.2, distance: 16, speed: 3.5, texture: 'venus.jpg' },
-        { name: "Earth", radius: 1.5, distance: 20, speed: 3.0, texture: 'earth.jpg' },
-        { name: "Mars", radius: 1.0, distance: 25, speed: 2.4, texture: 'mars.jpg' },
-        { name: "Jupiter", radius: 3.5, distance: 35, speed: 1.3, texture: 'jupiter.jpg' },
-        { name: "Saturn", radius: 3.0, distance: 45, speed: 0.9, texture: 'saturn.jpg' },
-        { name: "Uranus", radius: 2.5, distance: 55, speed: 0.7, texture: 'uranus.jpg' },
-        { name: "Neptune", radius: 2.4, distance: 65, speed: 0.5, texture: 'neptune.jpg' }
+        { name: "Mercury", radius: 1, distance: 158, speed: 4.7, texture: 'mercury.jpg' },
+        { name: "Venus", radius: 1.6, distance: 208, speed: 3.5, texture: 'venus.jpg' },
+        { name: "Earth", radius: 1.7, distance: 250, speed: 3.0, texture: 'earth.jpg' },
+        { name: "Mars", radius: 1.3, distance: 328, speed: 2.4, texture: 'mars.jpg' },
+        { name: "Jupiter", radius: 20, distance: 878, speed: 1.3, texture: 'jupiter.jpg' },
+        { name: "Saturn", radius: 18, distance: 1529, speed: 0.9, texture: 'saturn.jpg' },
+        { name: "Uranus", radius: 16, distance: 2875, speed: 0.7, texture: 'uranus.jpg' },
+        { name: "Neptune", radius: 14, distance: 4597, speed: 0.5, texture: 'neptune.jpg' }
     ];
 
     planets.forEach(planet => {
@@ -115,7 +115,7 @@ function createSolarSystem() {
     moon.speed = 0.2; // Скорость вращения вокруг Земли
 
     // Кольца Сатурна
-    const saturnRingGeometry = new THREE.RingGeometry(4, 6, 64);
+    const saturnRingGeometry = new THREE.RingGeometry(20, 6, 64);
     const saturnRingTexture = new THREE.TextureLoader().load('/static/textures/saturn_ring.png');
     const saturnRingMaterial = new THREE.MeshPhongMaterial({
         map: saturnRingTexture,

@@ -2,6 +2,8 @@ let scene, camera, renderer, controls;
 let isCameraLocked = false;
 let originalCameraPosition = new THREE.Vector3();
 let originalControlsTarget = new THREE.Vector3();
+let selectedPlanet = null;
+let isCameraTracking = false;
 
 function init() {
     scene = new THREE.Scene();
@@ -97,6 +99,7 @@ function createSolarSystem() {
         mesh.speed = planet.speed * 0.0001; // Скорость вращения
 
         mesh.initialDistance = planet.distance;
+        mesh.updateMatrixWorld();
     });
 
     // Луна
@@ -105,9 +108,9 @@ function createSolarSystem() {
     const moonTexture = new THREE.TextureLoader().load('/static/textures/moon.jpg');
     const moon = new THREE.Mesh(moonGeometry, new THREE.MeshPhongMaterial({ map: moonTexture }));
     moon.name = "Moon";
-    moon.position.x = 2;
+    moon.position.x = 3;
     moon.speed = 0.002;
-    moon.initialDistance = 2;
+    moon.initialDistance = 3;
     earth.add(moon);
 
     // Свойства для анимации Луны
@@ -150,6 +153,7 @@ function onDocumentClick(event) {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
+    // Собираем кликабельные объекты (исключая орбиты)
     const interactableObjects = [];
     scene.traverse(obj => {
         if (!obj.isOrbit && obj.isMesh) interactableObjects.push(obj);
@@ -161,36 +165,32 @@ function onDocumentClick(event) {
     if (intersects.length > 0) {
         const clickedObj = intersects[0].object;
 
-        // Получаем глобальную позицию объекта
-        const targetPosition = new THREE.Vector3();
-        clickedObj.getWorldPosition(targetPosition);
-
-        // ЛКМ - приближение к объекту
         if (event.button === 0) {
-            originalCameraPosition.copy(camera.position);
-            originalControlsTarget.copy(controls.target);
-
-            // Устанавливаем цель управления в позицию объекта
-            controls.target.copy(targetPosition);
-            controls.update();
-
-            // Включаем управление камерой
-            controls.enablePan = true;
-            controls.enableZoom = true;
-            isCameraLocked = true;
+            selectedPlanet = clickedObj;
+            isCameraTracking = true;     
+            controls.enabled = true;     
         }
+    }
+    
+    // Правая кнопка - сброс
+    if (event.button === 2) {
+        isCameraTracking = false;
+        controls.enabled = true;
+        controls.target.set(0, 0, 0);
     }
 }
 
 function animate() {
     requestAnimationFrame(animate);
 
-    // Плавное перемещение
-    if (isCameraLocked) {
-        controls.screenSpacePanning = false;
-        controls.minDistance = 10;
-        controls.maxDistance = 100;
+    // Автоматическое слежение за планетой
+    if (isCameraTracking && selectedPlanet) {
+        const targetPosition = new THREE.Vector3();
+        selectedPlanet.getWorldPosition(targetPosition);
+        controls.target.copy(targetPosition);
+        controls.update();
     }
+
 
     // Обновление позиций планет и вращение
     scene.traverse(obj => {

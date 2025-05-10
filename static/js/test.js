@@ -1,3 +1,17 @@
+this.infoPanel = document.createElement('div');
+this.infoPanel.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    max-width: 300px;
+    display: none;
+`;
+document.body.appendChild(this.infoPanel);
+
 const SOLAR_SETTINGS = {
     background: {
         size: 5000,
@@ -43,7 +57,7 @@ class SolarSystem {
     }
 
     setupScene() {
-        // Background
+        // Фон (не работает)
         const bgGeometry = new THREE.SphereGeometry(SOLAR_SETTINGS.background.size, 32, 32);
         const bgTexture = new THREE.TextureLoader().load(SOLAR_SETTINGS.background.texture);
         bgTexture.wrapS = bgTexture.wrapT = THREE.RepeatWrapping;
@@ -54,15 +68,16 @@ class SolarSystem {
             new THREE.MeshBasicMaterial({ map: bgTexture, side: THREE.BackSide })
         ));
 
-        // Camera
+        // Камера
         this.camera.position.set(0, 50, 100);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(this.renderer.domElement);
 
-        // Lighting
+        // Освещение
         this.scene.add(new THREE.PointLight(0xffffff, 1.5));
+        this.scene.add(new THREE.AmbientLight(0x404040));
         
-        // Controls
+        // Управление
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.05;
     }
@@ -191,8 +206,8 @@ class SolarSystem {
             const [intersect] = raycaster.intersectObjects(meshes);
 
             if (e.button === 0 && intersect) {
-                // Сброс предыдущей подсветки
-                if (this.selectedPlanet) {
+                // Сброс предыдущей подсветки (доработать)
+                /*if (this.selectedPlanet) {
                     this.selectedPlanet.material = originalMaterial;
                 }
 
@@ -203,21 +218,41 @@ class SolarSystem {
                 this.selectedPlanet.material = new THREE.MeshPhongMaterial({
                     map: originalMaterial.map,
                     emissive: 0xFFA500, // Оранжевое свечение
-                    emissiveIntensity: 1
-                });
+                    emissiveIntensity: 0
+                });*/
+
+                const planetName = intersect.object.name;
+                fetch(`/get_wiki_summary?planet=${encodeURIComponent(planetName)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.error) {
+                            this.infoPanel.innerHTML = data.error;
+                        } else {
+                            this.infoPanel.innerHTML = `
+                                <h3>${data.title}</h3>
+                                <p>${data.summary}</p>
+                            `;
+                        }
+                        this.infoPanel.style.display = 'block';
+                    })
+                    .catch(error => {
+                        this.infoPanel.innerHTML = "Ошибка при получении данных";
+                        this.infoPanel.style.display = 'block';
+                    });
 
                 // Обновление цели камеры
+                this.selectedPlanet = intersect.object;
                 this.controls.target.copy(this.selectedPlanet.getWorldPosition(new THREE.Vector3()));
             }
 
             // Сброс правой кнопкой
-            if (e.button === 2) {
+            /*if (e.button === 2) {
                 if (this.selectedPlanet) {
                     this.selectedPlanet.material = originalMaterial;
                 }
                 this.controls.target.set(0, 0, 0);
                 this.selectedPlanet = null;
-            }
+            }*/
         });
 
         window.addEventListener('resize', () => {

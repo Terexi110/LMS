@@ -240,6 +240,25 @@ class SolarSystem {
                         this.infoPanel.style.display = 'block';
                     });
 
+                fetch(`/get_wolfram_data?planet=${encodeURIComponent(planetName)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.error) {
+                            this.infoPanel.innerHTML = data.error;
+                        } else {
+                            this.infoPanel.innerHTML = `
+                                <h3>${data.title}</h3>
+                                <p>${data.summary}</p>
+                            `;
+                        }
+                        this.infoPanel.style.display = 'block';
+                    })
+                    .catch(error => {
+                        this.infoPanel.innerHTML = "Ошибка при получении данных";
+                        this.infoPanel.style.display = 'block';
+                    });
+
+
                 // Обновление цели камеры
                 this.selectedPlanet = intersect.object;
                 this.controls.target.copy(this.selectedPlanet.getWorldPosition(new THREE.Vector3()));

@@ -1,16 +1,4 @@
-this.infoPanel = document.createElement('div');
-this.infoPanel.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    padding: 15px;
-    border-radius: 5px;
-    max-width: 300px;
-    display: none;
-`;
-document.body.appendChild(this.infoPanel);
+
 
 const SOLAR_SETTINGS = {
     background: {
@@ -45,6 +33,10 @@ class SolarSystem {
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         this.selectedPlanet = null;
+
+        this.infoPanel = document.createElement('div');
+        this.infoPanel.classList.add('info-panel');
+        document.body.appendChild(this.infoPanel);
         
         this.init();
     }
@@ -83,13 +75,13 @@ class SolarSystem {
     }
 
     createCelestialBodies() {
-        // Sun
+        // Солнце
         const sun = this.createBody(SOLAR_SETTINGS.sun.radius, SOLAR_SETTINGS.sun.texture.split('/').pop());
         sun.material = new THREE.MeshBasicMaterial({ map: sun.material.map });
-        sun.name = "Sun";
+        sun.name = "Солнце";
         this.scene.add(sun);
 
-        // Planets
+        // Планеты
         SOLAR_SETTINGS.planets.forEach(config => {
             const planet = this.createBody(config.radius, `${config.name.toLowerCase()}.jpg`);
             planet.name = config.name;
@@ -106,6 +98,7 @@ class SolarSystem {
                     ringGeometry,
                     new THREE.MeshPhongMaterial({ map: ringTexture, side: THREE.DoubleSide })
                 );
+                ring.name = "Saturn Ring";
                 ring.rotation.x = -Math.PI/2;
                 planet.add(ring);
             }
@@ -163,9 +156,9 @@ class SolarSystem {
         }
         
         this.scene.children.forEach(obj => {
-            if(!obj.isMesh || obj.name === "Sun") return;
+            if(!obj.isMesh || obj.name === "Солнце") return;
             
-            // Planet movement
+            // Движение планет
             if(obj.parent === this.scene) {
                 obj.angle += obj.speed;
                 obj.position.x = Math.cos(obj.angle) * obj.initialDistance;
@@ -220,6 +213,7 @@ class SolarSystem {
                     emissive: 0xFFA500, // Оранжевое свечение
                     emissiveIntensity: 0
                 });*/
+                this.infoPanel.classList.remove('open');
 
                 const planetName = intersect.object.name;
                 fetch(`/get_wiki_summary?planet=${encodeURIComponent(planetName)}`)
@@ -233,14 +227,21 @@ class SolarSystem {
                                 <p>${data.summary}</p>
                             `;
                         }
-                        this.infoPanel.style.display = 'block';
+                        this.infoPanel.innerHTML = `
+                            <h3>${data.title}</h3>
+                            <p>${data.summary}</p>
+                            `;
+                        this.infoPanel.classList.add('open');
                     })
                     .catch(error => {
-                        this.infoPanel.innerHTML = "Ошибка при получении данных";
-                        this.infoPanel.style.display = 'block';
+                        this.infoPanel.innerHTML = `
+                            <h3>Ошибка</h3>
+                            <p>Не удалось получить данные о планете.</p>
+                        `;
+                        this.infoPanel.classList.add('open');
                     });
 
-                fetch(`/get_wolfram_data?planet=${encodeURIComponent(planetName)}`)
+                /*fetch(`/get_wolfram_data?planet=${encodeURIComponent(planetName)}`)
                     .then(response => response.json())
                     .then(data => {
                         if(data.error) {
@@ -256,7 +257,7 @@ class SolarSystem {
                     .catch(error => {
                         this.infoPanel.innerHTML = "Ошибка при получении данных";
                         this.infoPanel.style.display = 'block';
-                    });
+                    });*/
 
 
                 // Обновление цели камеры
@@ -265,13 +266,14 @@ class SolarSystem {
             }
 
             // Сброс правой кнопкой
-            /*if (e.button === 2) {
+            if (e.button === 2) {
+                this.infoPanel.classList.remove('open');
                 if (this.selectedPlanet) {
-                    this.selectedPlanet.material = originalMaterial;
+                    // this.selectedPlanet.material = originalMaterial;
                 }
                 this.controls.target.set(0, 0, 0);
                 this.selectedPlanet = null;
-            }*/
+            }
         });
 
         window.addEventListener('resize', () => {

@@ -22,7 +22,8 @@ def get_wiki_summary():
         "Jupiter": "Юпитер",
         "Saturn": "Сатурн",
         "Uranus": "Уран",
-        "Neptune": "Нептун"
+        "Neptune": "Нептун",
+        "Saturn Ring": "Кольца Сатурна"
     }
     page = wiki_wiki.page(planet_translation.get(planet_name, planet_name))
     

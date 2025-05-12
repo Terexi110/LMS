@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+    body {
+        background-color: #1a1a1a;
+        color: #ffffff;
+    }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -29,7 +35,7 @@
                 {{ form.submit() }}
             </div>
         </form>
-        <p>Don't have an account? <a href="{{ url_for('main.register') }}">Register here</a></p>
+        <p>Нет аккаунта? <a href="{{ url_for('main.register') }}">Регистрация</a></p>
     </div>
 </body>
 </html>

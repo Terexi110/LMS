@@ -1,10 +1,278 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Космический гид</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            100: '#e0e0ff',
+                            200: '#c0c0ff',
+                            300: '#a0a0ff',
+                            400: '#8080ff',
+                            500: '#6060ff',
+                            600: '#4040ff',
+                            700: '#2020ff',
+                            800: '#0000ff',
+                            900: '#0000e0',
+                        },
+                        dark: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            700: '#334155',
+                            600: '#475569',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .planet-card {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        .planet-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 255, 0.2);
+        }
+        .dark .planet-card:hover {
+            box-shadow: 0 10px 25px rgba(100, 100, 255, 0.3);
+        }
+        .solar-img {
+            transition: transform 0.5s ease;
+        }
+        .solar-img:hover {
+            transform: scale(1.03);
+        }
+        .contact-icon {
+            transition: all 0.3s ease;
+        }
+        .contact-icon:hover {
+            transform: scale(1.2);
+            color: #6060ff;
+        }
+        .dark .contact-icon:hover {
+            color: #a0a0ff;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-gray-100 dark:bg-dark-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+    <div class="header bg-gray-800 dark:bg-dark-800 py-4 px-6 flex justify-between items-center shadow-md">
+        <div class="flex items-center space-x-2">
+            <i class="fas fa-rocket text-space-400 text-2xl"></i>
+            <span class="text-xl font-bold text-white">Космический гид</span>
+        </div>
+        <div class="flex space-x-4">
+            <button id="theme-toggle" class="text-gray-300 hover:text-white">
+                <i class="fas fa-moon dark:hidden"></i>
+                <i class="fas fa-sun hidden dark:inline"></i>
+            </button>
+            <a href="{{ url_for('main.login') }}" class="btn bg-space-600 hover:bg-space-700 text-white px-4 py-2 rounded-lg transition-colors">
+                <i class="fas fa-sign-in-alt mr-2"></i>Войти
+            </a>
+            <a href="{{ url_for('main.register') }}" class="btn bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
+                <i class="fas fa-user-plus mr-2"></i>Регистрация
+            </a>
+        </div>
+    </div>
 
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <div class="hero text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-space-700 dark:text-space-400">Добро пожаловать в Космический гид</h1>
+            <p class="text-xl md:text-2xl mb-8 text-gray-600 dark:text-gray-300">Исследуйте Солнечную систему в потрясающем 3D</p>
+            
+            <div class="relative rounded-xl overflow-hidden shadow-xl max-w-4xl mx-auto mb-8">
+                <a href="{{ url_for('main.index') }}">
+                    <img src="{{ url_for('static', filename='images/solar_system_preview.png') }}" 
+                         alt="Солнечная система" 
+                         class="solar-img w-full h-auto"
+                         onclick="window.location.href='/solar_system'">
+                </a>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-6">
+                    <button class="bg-space-600 hover:bg-space-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-colors">
+                        <i class="fas fa-play mr-2"></i>Начать путешествие
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div class="planet-card bg-white dark:bg-dark-800 p-6 rounded-xl shadow-md">
+                <div class="text-space-600 dark:text-space-400 text-4xl mb-4">
+                    <i class="fas fa-sun"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Солнечная система</h3>
+                <p class="text-gray-600 dark:text-gray-300">Исследуйте все 8 планет, их спутники и другие небесные тела в нашей системе с точными орбитами и масштабами.</p>
+            </div>
+            <div class="planet-card bg-white dark:bg-dark-800 p-6 rounded-xl shadow-md">
+                <div class="text-space-600 dark:text-space-400 text-4xl mb-4">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">3D модели</h3>
+                <p class="text-gray-600 dark:text-gray-300">Высококачественные 3D модели планет с текстурами высокого разрешения, созданные на основе реальных данных NASA.</p>
+            </div>
+            <div class="planet-card bg-white dark:bg-dark-800 p-6 rounded-xl shadow-md">
+                <div class="text-space-600 dark:text-space-400 text-4xl mb-4">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Образование</h3>
+                <p class="text-gray-600 dark:text-gray-300">Подробная информация о каждой планете, её характеристиках, истории исследования и интересных фактах.</p>
+            </div>
+        </div>
+
+        <div class="description bg-white dark:bg-dark-800 p-8 rounded-xl shadow-md mb-12">
+            <h2 class="text-3xl font-bold mb-6 text-space-700 dark:text-space-400">О проекте</h2>
+            <p class="text-lg mb-6">Это интерактивная 3D модель Солнечной системы, созданная с использованием современных веб-технологий. Наш проект позволяет вам исследовать космос не выходя из дома!</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-space-600 dark:text-space-400">Основные возможности:</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-space-600 dark:text-space-400 mt-1 mr-2"></i>
+                            <span>Реалистичные орбиты и движения планет с точными периодами обращения</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-space-600 dark:text-space-400 mt-1 mr-2"></i>
+                            <span>Интерактивное управление камерой с возможностью приближения к любым объектам</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-space-600 dark:text-space-400 mt-1 mr-2"></i>
+                            <span>Подробная информация о каждом небесном теле с фотографиями и научными данными</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-space-600 dark:text-space-400 mt-1 mr-2"></i>
+                            <span>Режим сравнения размеров планет и их расстояний от Солнца</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-space-600 dark:text-space-400">Технологии:</h3>
+                    <div class="flex flex-wrap gap-3 mb-6">
+                        <span class="bg-space-100 dark:bg-space-900 text-space-800 dark:text-space-200 px-3 py-1 rounded-full text-sm">Three.js</span>
+                        <span class="bg-space-100 dark:bg-space-900 text-space-800 dark:text-space-200 px-3 py-1 rounded-full text-sm">WebGL</span>
+                        <span class="bg-space-100 dark:bg-space-900 text-space-800 dark:text-space-200 px-3 py-1 rounded-full text-sm">Python</span>
+                        <span class="bg-space-100 dark:bg-space-900 text-space-800 dark:text-space-200 px-3 py-1 rounded-full text-sm">Flask</span>
+                        <span class="bg-space-100 dark:bg-space-900 text-space-800 dark:text-space-200 px-3 py-1 rounded-full text-sm">Tailwind CSS</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4 text-space-600 dark:text-space-400">Для кого этот проект?</h3>
+                    <p class="mb-4">Наш проект будет интересен как школьникам, изучающим астрономию, так и всем любителям космоса, желающим лучше понять устройство нашей Солнечной системы.</p>
+                    <p>Преподаватели могут использовать этот ресурс для наглядного объяснения астрономических концепций.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="contacts bg-white dark:bg-dark-800 p-8 rounded-xl shadow-md">
+            <h2 class="text-3xl font-bold mb-6 text-space-700 dark:text-space-400">Контакты</h2>
+            <p class="text-lg mb-8">У вас есть вопросы или предложения по улучшению проекта? Мы будем рады услышать ваше мнение!</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="contact-icon text-4xl mb-4 text-space-600 dark:text-space-400">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Email</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Terexi110@gmail.com</p>
+                </div>
+                <div class="text-center">
+                    <div class="contact-icon text-4xl mb-4 text-space-600 dark:text-space-400">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Телефон</h3>
+                    <p class="text-gray-600 dark:text-gray-300">+7 (982) 261-25-11</p>
+                </div>
+                <div class="text-center">
+                    <div class="contact-icon text-4xl mb-4 text-space-600 dark:text-space-400">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Социальные сети</h3>
+                    <div class="flex justify-center space-x-4">
+                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-space-600 dark:hover:text-space-400">
+                            <i class="fab fa-vk text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-space-600 dark:hover:text-space-400">
+                            <i class="fab fa-telegram text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-space-600 dark:hover:text-space-400">
+                            <i class="fab fa-youtube text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <h3 class="text-xl font-semibold mb-4 text-space-600 dark:text-space-400">Обратная связь</h3>
+                <form class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="name" class="block mb-2">Ваше имя</label>
+                            <input type="text" id="name" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-dark-700 focus:outline-none focus:ring-2 focus:ring-space-500">
+                        </div>
+                        <div>
+                            <label for="email" class="block mb-2">Email</label>
+                            <input type="email" id="email" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-dark-700 focus:outline-none focus:ring-2 focus:ring-space-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="message" class="block mb-2">Сообщение</label>
+                        <textarea id="message" rows="4" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-dark-700 focus:outline-none focus:ring-2 focus:ring-space-500"></textarea>
+                    </div>
+                    <button type="submit" class="bg-space-600 hover:bg-space-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-colors">
+                        Отправить сообщение
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 dark:bg-dark-800 py-8 mt-12">
+        <div class="container mx-auto px-4 text-center text-gray-300">
+            <div class="flex justify-center space-x-6 mb-6">
+                <a href="#" class="hover:text-white"><i class="fab fa-vk text-2xl"></i></a>
+                <a href="#" class="hover:text-white"><i class="fab fa-telegram text-2xl"></i></a>
+                <a href="#" class="hover:text-white"><i class="fab fa-youtube text-2xl"></i></a>
+                <a href="#" class="hover:text-white"><i class="fab fa-github text-2xl"></i></a>
+            </div>
+            <p class="mb-2">© 2025 Космический гид. Все права защищены.</p>
+            <p class="text-sm">Используя этот сайт, вы соглашаетесь с нашими <a href="#" class="text-space-400 hover:underline">Условиями использования</a> и <a href="#" class="text-space-400 hover:underline">Политикой конфиденциальности</a>.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Тёмная тема
+        const themeToggle = document.getElementById('theme-toggle');
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        
+        // Проверяем сохранённую тему или системные настройки
+        const currentTheme = localStorage.getItem('theme') || 
+                           (prefersDarkScheme.matches ? 'dark' : 'light');
+        
+        if (currentTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+        
+        themeToggle.addEventListener('click', function() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+
+        // Плавная прокрутка для якорей
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
 </html>

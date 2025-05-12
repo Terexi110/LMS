@@ -23,10 +23,28 @@
             font-size: 14px;
             line-height: 1.4;
         }
+
+        .info-panel {
+            position: fixed;
+            top: -100%;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            max-width: 300px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            transition: top 1.2s ease;
+            z-index: 1000;
+        }
+
+        .info-panel.open {
+            top: 20px;
+        }
     </style>
 </head>
 <body>
-    <div id="info">Click on a planet!</div>
+    <div id="info">Нажмите на планету!</div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="{{ url_for('static', filename='js/solar_system.js') }}"></script>

@@ -28,7 +28,7 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user)
-            return redirect(url_for('main.home'))
+            return redirect(url_for('main.index'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', form=form)
@@ -41,7 +41,7 @@ def logout():
     return redirect(url_for('main.login'))
 
 
-@main.route('/home')
+@main.route('/')
 @login_required
-def home():
-    return render_template('home.html')
+def index():
+    return render_template('index.html')

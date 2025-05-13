@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Формы авторизации и регистрации</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .form-container {
+            perspective: 1000px;
+        }
+        .form-wrapper {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .form-wrapper.flipped {
+            transform: rotateY(180deg);
+        }
+        .form {
+            backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+        }
+        .form.register {
+            transform: rotateY(180deg);
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .input-group input {
+            transition: all 0.3s;
+        }
+        .input-group input:focus ~ label,
+        .input-group input:not(:placeholder-shown) ~ label {
+            transform: translateY(-1.5rem) scale(0.85);
+            color: #6366f1;
+        }
+        .input-group label {
+            position: absolute;
+            left: 0.75rem;
+            top: 0.75rem;
+            transition: all 0.3s;
+            pointer-events: none;
+            background: white;
+            padding: 0 0.25rem;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-image: linear-gradient(to right, #6366f1, #8b5cf6);
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            background-image: linear-gradient(to right, #8b5cf6, #6366f1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .social-btn {
+            transition: all 0.3s;
+        }
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .tab {
+            transition: all 0.3s;
+        }
+        .tab.active {
+            color: #6366f1;
+            border-bottom: 2px solid #6366f1;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden w-full max-w-md">
+        <!-- Вкладки -->
+        <div class="flex border-b">
+            <div class="w-1/2 text-center py-4 cursor-pointer tab active" id="login-tab">
+                <span class="font-medium">Вход</span>
+            </div>
+            <div class="w-1/2 text-center py-4 cursor-pointer tab" id="register-tab">
+                <span class="font-medium">Регистрация</span>
+            </div>
+        </div>
+
+        <!-- Контейнер форм -->
+        <div class="form-container p-8">
+            <div class="form-wrapper relative h-96" id="form-wrapper">
+                <!-- Форма входа -->
+                <form class="form login" id="login-form">
+                    <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Добро пожаловать!</h2>
+
+                    <div class="input-group">
+                        <input type="email" id="login-email" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder=" " required>
+                        <label for="login-email" class="text-gray-500">Email</label>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" id="login-password" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder=" " required>
+                        <label for="login-password" class="text-gray-500">Пароль</label>
+                        <span class="toggle-password text-gray-400"><i class="far fa-eye"></i></span>
+                    </div>
+
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="remember" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="remember" class="ml-2 block text-sm text-gray-700">Запомнить меня</label>
+                        </div>
+                        <a href="#" class="text-sm text-indigo-600 hover:text-indigo-500">Забыли пароль?</a>
+                    </div>
+
+                    <button type="submit" class="w-full py-2 px-4 rounded-lg text-white font-medium btn-primary">
+                        Войти
+                    </button>
+
+                    <div class="text-center my-4 text-gray-400">или</div>
+
+                    <div class="flex justify-center space-x-4">
+                        <button type="button" class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center social-btn">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button type="button" class="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center social-btn">
+                            <i class="fab fa-google"></i>
+                        </button>
+                        <button type="button" class="w-10 h-10 rounded-full bg-blue-400 text-white flex items-center justify-center social-btn">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                    </div>
+
+                    <p class="text-center mt-6 text-gray-500">
+                        Нет аккаунта?
+                        <a href="#" class="text-indigo-600 hover:text-indigo-500 font-medium" id="show-register">Зарегистрироваться</a>
+                    </p>
+                </form>
+
+                <!-- Форма регистрации -->
+                <form class="form register hidden" id="register-form">
+                    <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Создать аккаунт</h2>
+
+                    <div class="input-group">
+                        <input type="text" id="register-name" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder=" " required>
+                        <label for="register-name" class="text-gray-500">Имя</label>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="email" id="register-email" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder=" " required>
+                        <label for="register-email" class="text-gray-500">Email</label>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" id="register-password" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder=" " required>
+                        <label for="register-password" class="text-gray-500">Пароль</label>
+                        <span class="toggle-password text-gray-400"><i class="far fa-eye"></i></span>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" id="register-confirm" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder=" " required>
+                        <label for="register-confirm" class="text-gray-500">Подтвердите пароль</label>
+                        <span class="toggle-password text-gray-400"><i class="far fa-eye"></i></span>
+                    </div>
+
+                    <div class="flex items-center mb-6">
+                        <input type="checkbox" id="terms" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" required>
+                        <label for="terms" class="ml-2 block text-sm text-gray-700">
+                            Я согласен с <a href="#" class="text-indigo-600 hover:text-indigo-500">условиями</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="w-full py-2 px-4 rounded-lg text-white font-medium btn-primary">
+                        Зарегистрироваться
+                    </button>
+
+                    <div class="text-center my-4 text-gray-400">или</div>
+
+                    <div class="flex justify-center space-x-4">
+                        <button type="button" class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center social-btn">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button type="button" class="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center social-btn">
+                            <i class="fab fa-google"></i>
+                        </button>
+                        <button type="button" class="w-10 h-10 rounded-full bg-blue-400 text-white flex items-center justify-center social-btn">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                    </div>
+
+                    <p class="text-center mt-6 text-gray-500">
+                        Уже есть аккаунт?
+                        <a href="#" class="text-indigo-600 hover:text-indigo-500 font-medium" id="show-login">Войти</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginTab = document.getElementById('login-tab');
+            const registerTab = document.getElementById('register-tab');
+            const showRegister = document.getElementById('show-register');
+            const showLogin = document.getElementById('show-login');
+            const formWrapper = document.getElementById('form-wrapper');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+
+            // Переключение между вкладками
+            loginTab.addEventListener('click', function() {
+                if (!this.classList.contains('active')) {
+                    toggleForms();
+                }
+            });
+
+            registerTab.addEventListener('click', function() {
+                if (!this.classList.contains('active')) {
+                    toggleForms();
+                }
+            });
+
+            // Переключение по ссылкам внутри форм
+            showRegister.addEventListener('click', function(e) {
+                e.preventDefault();
+                toggleForms();
+            });
+
+            showLogin.addEventListener('click', function(e) {
+                e.preventDefault();
+                toggleForms();
+            });
+
+            // Функция переключения форм
+            function toggleForms() {
+                loginTab.classList.toggle('active');
+                registerTab.classList.toggle('active');
+                formWrapper.classList.toggle('flipped');
+
+                // Для анимации вкладок
+                if (loginTab.classList.contains('active')) {
+                    loginTab.style.color = '#6366f1';
+                    registerTab.style.color = '#6b7280';
+                } else {
+                    registerTab.style.color = '#6366f1';
+                    loginTab.style.color = '#6b7280';
+                }
+            }
+
+            // Переключение видимости пароля
+            const togglePasswordButtons = document.querySelectorAll('.toggle-password');
+            togglePasswordButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.previousElementSibling.previousElementSibling;
+                    const icon = this.querySelector('i');
+
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            });
+
+            // Обработка отправки форм
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Форма входа отправлена!');
+            });
+
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Форма регистрации отправлена!');
+            });
+        });
+    </script>
+</body>
+</html>

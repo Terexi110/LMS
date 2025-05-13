@@ -1,11 +1,14 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user, login_required
 from models import User, db
 from forms import RegistrationForm, LoginForm
 from flask_bcrypt import Bcrypt
+import wikipediaapi
+
 
 main = Blueprint('main', __name__)
 bcrypt = Bcrypt()
+wiki_wiki = wikipediaapi.Wikipedia('Terexi110@gmail.com', 'ru')
 
 
 @main.route('/register', methods=['GET', 'POST'])
@@ -32,6 +35,36 @@ def login():
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', form=form)
+
+
+@main.route('/solar_system')
+def solar_system():
+    return render_template('solar_system.html')
+
+
+@main.route('/get_wiki_summary', methods=['GET'])
+def get_wiki_summary():
+    planet_name = request.args.get('planet')
+    planet_translation = {
+        "Mercury": "Меркурий",
+        "Venus": "Венера",
+        "Earth": "Земля",
+        "Mars": "Марс",
+        "Jupiter": "Юпитер",
+        "Saturn": "Сатурн",
+        "Uranus": "Уран",
+        "Neptune": "Нептун",
+        "Saturn Ring": "Кольца Сатурна"
+    }
+    page = wiki_wiki.page(planet_translation.get(planet_name, planet_name))
+
+    if not page.exists():
+        return jsonify({"error": "Статья не найдена"}), 404
+
+    return jsonify({
+        "title": page.title,
+        "summary": page.summary[0:500] + "..."
+    })
 
 
 @main.route('/logout')

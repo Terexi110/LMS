@@ -88,20 +88,17 @@
         <div class="hero text-center mb-12">
             <h1 class="text-4xl md:text-5xl font-bold mb-4 text-space-700 dark:text-space-400">Добро пожаловать в Космический гид</h1>
             <p class="text-xl md:text-2xl mb-8 text-gray-600 dark:text-gray-300">Исследуйте Солнечную систему в потрясающем 3D</p>
-            
-            <div class="relative rounded-xl overflow-hidden shadow-xl max-w-4xl mx-auto mb-8">
-                <a href="{{ url_for('main.index') }}">
-                    <img src="{{ url_for('static', filename='images/solar_system_preview.png') }}" 
-                         alt="Солнечная система" 
-                         class="solar-img w-full h-auto"
-                         onclick="window.location.href='/solar_system'">
-                </a>
-                <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-6">
-                    <button class="bg-space-600 hover:bg-space-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-colors">
+
+            <a href="{{ url_for('main.solar_system') }}" class="block relative rounded-xl overflow-hidden shadow-xl max-w-4xl mx-auto mb-8 group cursor-pointer">
+                <img src="{{ url_for('static', filename='images/solar_system_preview.png') }}"
+                     alt="Солнечная система"
+                     class="w-full h-auto transition-transform duration-300 ease-in-out group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
+                    <div class="bg-space-600 group-hover:bg-space-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-colors">
                         <i class="fas fa-play mr-2"></i>Начать путешествие
-                    </button>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
@@ -131,7 +128,7 @@
         <div class="description bg-white dark:bg-dark-800 p-8 rounded-xl shadow-md mb-12">
             <h2 class="text-3xl font-bold mb-6 text-space-700 dark:text-space-400">О проекте</h2>
             <p class="text-lg mb-6">Это интерактивная 3D модель Солнечной системы, созданная с использованием современных веб-технологий. Наш проект позволяет вам исследовать космос не выходя из дома!</p>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                     <h3 class="text-xl font-semibold mb-4 text-space-600 dark:text-space-400">Основные возможности:</h3>
@@ -173,7 +170,7 @@
         <div class="contacts bg-white dark:bg-dark-800 p-8 rounded-xl shadow-md">
             <h2 class="text-3xl font-bold mb-6 text-space-700 dark:text-space-400">Контакты</h2>
             <p class="text-lg mb-8">У вас есть вопросы или предложения по улучшению проекта? Мы будем рады услышать ваше мнение!</p>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="text-center">
                     <div class="contact-icon text-4xl mb-4 text-space-600 dark:text-space-400">
@@ -250,15 +247,15 @@
         // Тёмная тема
         const themeToggle = document.getElementById('theme-toggle');
         const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-        
+
         // Проверяем сохранённую тему или системные настройки
-        const currentTheme = localStorage.getItem('theme') || 
+        const currentTheme = localStorage.getItem('theme') ||
                            (prefersDarkScheme.matches ? 'dark' : 'light');
-        
+
         if (currentTheme === 'dark') {
             document.documentElement.classList.add('dark');
         }
-        
+
         themeToggle.addEventListener('click', function() {
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
